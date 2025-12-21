@@ -1,0 +1,18 @@
+using System;
+
+class Test
+{
+    public void Show()
+    {
+        Console.WriteLine("This is a class");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Test t = new Test();
+        t.Show();
+    }
+}
