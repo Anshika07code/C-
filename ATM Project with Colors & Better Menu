@@ -1,0 +1,138 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        int balance = 1000;
+        int pin = 1234;
+        int enteredPin;
+        int attempts = 3;
+        int minBalance = 100;
+        List<string> transactions = new List<string>();
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("===== WELCOME TO EASY ATM =====\n");
+        Console.ResetColor();
+
+        // PIN Authentication
+        while (attempts > 0)
+        {
+            Console.Write("Enter PIN: ");
+            enteredPin = Convert.ToInt32(Console.ReadLine());
+
+            if (enteredPin == pin)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\nLogin Successful!\n");
+                Console.ResetColor();
+                break;
+            }
+            else
+            {
+                attempts--;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Wrong PIN. Attempts left: {attempts}\n");
+                Console.ResetColor();
+            }
+        }
+
+        if (attempts == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Card Blocked! Exiting...");
+            Console.ResetColor();
+            return;
+        }
+
+        int choice;
+        do
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n===== ATM MENU =====");
+            Console.ResetColor();
+            Console.WriteLine("1. Check Balance");
+            Console.WriteLine("2. Deposit");
+            Console.WriteLine("3. Withdraw");
+            Console.WriteLine("4. Transaction History");
+            Console.WriteLine("5. Change PIN");
+            Console.WriteLine("6. Exit");
+
+            Console.Write("Enter your choice: ");
+            choice = Convert.ToInt32(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Balance: {balance}");
+                    Console.ResetColor();
+                    break;
+
+                case 2:
+                    Console.Write("Enter deposit amount: ");
+                    int deposit = Convert.ToInt32(Console.ReadLine());
+                    balance += deposit;
+                    transactions.Add($"Deposited: {deposit}");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Deposit Successful!");
+                    Console.ResetColor();
+                    break;
+
+                case 3:
+                    Console.Write("Enter withdraw amount: ");
+                    int withdraw = Convert.ToInt32(Console.ReadLine());
+
+                    if (withdraw <= (balance - minBalance))
+                    {
+                        balance -= withdraw;
+                        transactions.Add($"Withdrawn: {withdraw}");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Please collect cash");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Insufficient Balance. Minimum balance {minBalance} must remain.");
+                        Console.ResetColor();
+                    }
+                    break;
+
+                case 4:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\n--- Transaction History ---");
+                    Console.ResetColor();
+                    if (transactions.Count == 0)
+                        Console.WriteLine("No transactions yet");
+                    else
+                        foreach (var t in transactions)
+                            Console.WriteLine(t);
+                    break;
+
+                case 5:
+                    Console.Write("Enter new PIN: ");
+                    int newPin = Convert.ToInt32(Console.ReadLine());
+                    pin = newPin;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("PIN changed successfully!");
+                    Console.ResetColor();
+                    break;
+
+                case 6:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("Thank you for using Easy ATM!");
+                    Console.ResetColor();
+                    break;
+
+                default:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid Choice");
+                    Console.ResetColor();
+                    break;
+            }
+
+        } while (choice != 6);
+    }
+}
