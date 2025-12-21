@@ -1,0 +1,117 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        int balance = 1000;
+        int pin = 1234;
+        int attempts = 3;
+        List<string> history = new List<string>();
+
+        // PIN Login
+        while (attempts > 0)
+        {
+            Console.Write("Enter PIN: ");
+            int enteredPin = Convert.ToInt32(Console.ReadLine());
+
+            if (enteredPin == pin)
+            {
+                Console.WriteLine("Login Successful!");
+                break;
+            }
+            else
+            {
+                attempts--;
+                Console.WriteLine("Wrong PIN. Attempts left: " + attempts);
+            }
+        }
+
+        if (attempts == 0)
+        {
+            Console.WriteLine("Card Blocked!");
+            return;
+        }
+
+        int choice;
+        do
+        {
+            Console.WriteLine("\n--- ATM MENU ---");
+            Console.WriteLine("1. Check Balance");
+            Console.WriteLine("2. Deposit");
+            Console.WriteLine("3. Withdraw");
+            Console.WriteLine("4. Transaction History");
+            Console.WriteLine("5. Change PIN");
+            Console.WriteLine("6. Exit");
+
+            Console.Write("Choose option: ");
+            choice = Convert.ToInt32(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    Console.WriteLine("Balance: " + balance);
+                    break;
+
+                case 2:
+                    Console.Write("Enter deposit amount: ");
+                    int deposit = Convert.ToInt32(Console.ReadLine());
+                    balance += deposit;
+                    history.Add("Deposited: " + deposit);
+                    Console.WriteLine("Deposit Successful");
+                    break;
+
+                case 3:
+                    Console.Write("Enter withdraw amount: ");
+                    int withdraw = Convert.ToInt32(Console.ReadLine());
+
+                    if (withdraw <= balance)
+                    {
+                        balance -= withdraw;
+                        history.Add("Withdrawn: " + withdraw);
+                        Console.WriteLine("Collect your cash");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Insufficient Balance");
+                    }
+                    break;
+
+                case 4:
+                    Console.WriteLine("\n--- Transaction History ---");
+                    if (history.Count == 0)
+                        Console.WriteLine("No transactions yet");
+                    else
+                        foreach (string h in history)
+                            Console.WriteLine(h);
+                    break;
+
+                case 5:
+                    Console.Write("Enter old PIN: ");
+                    int oldPin = Convert.ToInt32(Console.ReadLine());
+
+                    if (oldPin == pin)
+                    {
+                        Console.Write("Enter new PIN: ");
+                        pin = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("PIN Changed Successfully");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Incorrect Old PIN");
+                    }
+                    break;
+
+                case 6:
+                    Console.WriteLine("Thank you for using ATM");
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid Option");
+                    break;
+            }
+
+        } while (choice != 6);
+    }
+}
