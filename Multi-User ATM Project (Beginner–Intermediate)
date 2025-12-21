@@ -1,0 +1,165 @@
+using System;
+using System.Collections.Generic;
+
+class User
+{
+    public string Name;
+    public int PIN;
+    public int Balance;
+    public List<string> Transactions = new List<string>();
+
+    public User(string name, int pin, int balance)
+    {
+        Name = name;
+        PIN = pin;
+        Balance = balance;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Create some users
+        List<User> users = new List<User>
+        {
+            new User("Anshika", 1234, 1000),
+            new User("Rohan", 4321, 1500),
+            new User("Sita", 1111, 2000)
+        };
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("===== WELCOME TO MULTI-USER ATM =====\n");
+        Console.ResetColor();
+
+        // Login
+        User currentUser = null;
+        int attempts = 3;
+
+        while (attempts > 0)
+        {
+            Console.Write("Enter Username: ");
+            string username = Console.ReadLine();
+
+            Console.Write("Enter PIN: ");
+            int enteredPin = Convert.ToInt32(Console.ReadLine());
+
+            currentUser = users.Find(u => u.Name == username && u.PIN == enteredPin);
+
+            if (currentUser != null)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"\nWelcome {currentUser.Name}!\n");
+                Console.ResetColor();
+                break;
+            }
+            else
+            {
+                attempts--;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Invalid credentials. Attempts left: {attempts}\n");
+                Console.ResetColor();
+            }
+        }
+
+        if (currentUser == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Too many failed attempts! Exiting...");
+            Console.ResetColor();
+            return;
+        }
+
+        // ATM Menu
+        int choice;
+        int minBalance = 100;
+
+        do
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n===== ATM MENU =====");
+            Console.ResetColor();
+            Console.WriteLine("1. Check Balance");
+            Console.WriteLine("2. Deposit");
+            Console.WriteLine("3. Withdraw");
+            Console.WriteLine("4. Transaction History");
+            Console.WriteLine("5. Change PIN");
+            Console.WriteLine("6. Exit");
+
+            Console.Write("Enter your choice: ");
+            choice = Convert.ToInt32(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Balance: {currentUser.Balance}");
+                    Console.ResetColor();
+                    break;
+
+                case 2:
+                    Console.Write("Enter deposit amount: ");
+                    int deposit = Convert.ToInt32(Console.ReadLine());
+                    currentUser.Balance += deposit;
+                    currentUser.Transactions.Add($"Deposited: {deposit}");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Deposit Successful!");
+                    Console.ResetColor();
+                    break;
+
+                case 3:
+                    Console.Write("Enter withdraw amount: ");
+                    int withdraw = Convert.ToInt32(Console.ReadLine());
+
+                    if (withdraw <= (currentUser.Balance - minBalance))
+                    {
+                        currentUser.Balance -= withdraw;
+                        currentUser.Transactions.Add($"Withdrawn: {withdraw}");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Please collect cash");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Insufficient Balance. Minimum balance {minBalance} must remain.");
+                        Console.ResetColor();
+                    }
+                    break;
+
+                case 4:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\n--- Transaction History ---");
+                    Console.ResetColor();
+                    if (currentUser.Transactions.Count == 0)
+                        Console.WriteLine("No transactions yet");
+                    else
+                        foreach (var t in currentUser.Transactions)
+                            Console.WriteLine(t);
+                    break;
+
+                case 5:
+                    Console.Write("Enter new PIN: ");
+                    int newPin = Convert.ToInt32(Console.ReadLine());
+                    currentUser.PIN = newPin;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("PIN changed successfully!");
+                    Console.ResetColor();
+                    break;
+
+                case 6:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("Thank you for using Multi-User ATM!");
+                    Console.ResetColor();
+                    break;
+
+                default:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid Choice");
+                    Console.ResetColor();
+                    break;
+            }
+
+        } while (choice != 6);
+    }
+}
